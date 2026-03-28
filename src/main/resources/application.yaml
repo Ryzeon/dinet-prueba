@@ -1,3 +1,8 @@
+dinet:
+  pedidos:
+    carga:
+      batch-size: 500
+
 spring:
   application:
     name: dinet-prueba

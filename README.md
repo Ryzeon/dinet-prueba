@@ -1,10 +1,10 @@
 # dinet-prueba
 
-Backend en Java 17 + Spring Boot 3. La idea es cargar pedidos desde un CSV, validar y guardar en Postgres. El repo todavía está en construcción; lo que no esté hecho lo dejo anotado abajo para no olvidarme.
+Backend en Java 17 + Spring Boot 3. La idea es cargar pedidos desde un CSV, validarlos y guardarlos en Postgres. El repositorio sigue en desarrollo; abajo dejo anotado lo que falta para no perder el hilo.
 
-## Cómo levantarlo
+## Cómo ejecutarlo en local
 
-Hace falta JDK 17 (o superior), Docker y el wrapper de Maven (`./mvnw`).
+Necesitas JDK 17 (o superior), Docker y el wrapper de Maven (`./mvnw`).
 
 Postgres:
 
@@ -12,15 +12,15 @@ Postgres:
 docker compose up -d
 ```
 
-Por defecto levanta `dinet_dev` en el 5432 con user/pass `postgres`. Si cambias algo, el `docker-compose.yml` y `application.yaml` usan las mismas variables (`POSTGRES_DB`, etc.).
+Por defecto queda la base `dinet_dev` en el puerto 5432 con usuario y contraseña `postgres`. Si cambias la configuración, revisa `docker-compose.yml` y `application.yaml` (mismas variables, por ejemplo `POSTGRES_DB`).
 
-App:
+Aplicación:
 
 ```bash
 ./mvnw spring-boot-run
 ```
 
-Flyway corre solo al iniciar; los scripts están en `src/main/resources/db/migration/`.
+Flyway se ejecuta al iniciar; los scripts están en `src/main/resources/db/migration/`.
 
 Tests:
 
@@ -28,33 +28,43 @@ Tests:
 ./mvnw test
 ```
 
-Ahí uso H2 en memoria y **no** corro las migraciones de Flyway, porque el SQL está escrito para Postgres. Si rompes algo en una migración, el test no te lo va a avisar: conviene probar con Docker.
+En tests uso H2 en memoria y **no** aplico las migraciones de Flyway, porque el SQL está pensado para Postgres. Si rompes una migración, el test no lo va a detectar: conviene validar también con Docker.
 
-Cuando el API esté prendido, SpringDoc deja la spec en `/v3/api-docs` y la UI en `/swagger-ui`.
+Cuando el servicio esté arriba, SpringDoc publica la spec en `/v3/api-docs` y la UI en `/swagger-ui`.
 
-## Qué hay hecho y qué no
+## Qué está listo y qué falta
 
-Por ahora está armado el Postgres con Docker, el esquema con Flyway (V1) y unos datos de prueba (V2: clientes tipo `CLI-123` / `CLI-999` y zonas `ZONA1`, `ZONA5`, etc.). Falta todo lo demás: endpoint de carga, reglas de negocio en serio, seguridad JWT, batch, tests de dominio, Postman, carpeta `samples/`, lo que vaya saliendo.
+Por ahora hay Postgres con Docker, esquema Flyway (V1) y datos de prueba (V2: clientes como `CLI-123` / `CLI-999` y zonas `ZONA1`, `ZONA5`, etc.). También está definido el tamaño de lote en configuración (sección Batch), pero el código todavía no lo consume. Falta lo principal: endpoint de carga, reglas de negocio, JWT, el batch completo en código, tests de dominio, colección Postman y la carpeta `samples/`.
 
 ## Supuestos
 
-Todavía no fijé acá cosas como: si el CSV siempre trae cabecera, cómo contamos el número de línea en los errores, encoding, tope de tamaño de archivo, si un cliente `activo = false` cuenta o no para la validación. Cuando lo cierre en código, lo escribo en esta sección en una oración.
+Aún no dejo por escrito cosas como: si el CSV siempre trae cabecera, cómo numeramos la línea en los errores, encoding, límite de tamaño de archivo, si un cliente con `activo = false` entra o no en la validación. Cuando lo cierre en código, lo resumo aquí.
 
 ## Decisiones (por ahora)
 
-Postgres con tablas en `snake_case` y cambios de esquema solo por Flyway. Las semillas van en la V2 para no arrancar con catálogos vacíos.
+Postgres con tablas en `snake_case` y cambios de esquema solo con Flyway. Las semillas van en la V2 para no partir de catálogos vacíos.
 
-Lo que viene (hexagonal de verdad, idempotencia con hash, errores uniformes, JWT) lo voy sumando acá a medida que lo implemente, sin copy-paste de requisitos.
+Lo que sigue (arquitectura hexagonal, idempotencia con hash, errores uniformes, JWT) lo voy sumando en esta sección conforme lo implemente.
 
 ## Batch
 
-Cuando esté la carga por lotes, explico en dos párrafos: tamaño de lote (configurable, del orden de cientos de filas), cómo leo el archivo sin meterlo entero en RAM y cómo hago los inserts. Hoy no hay nada que contar.
+Clave en `application.yaml`: `dinet.pedidos.carga.batch-size`. Debe estar entre **500 y 1000**; fuera de ese rango el contexto de Spring no inicia.
+
+**Por qué 500 por defecto:** el volumen esperado es del orden de **~1000 filas por archivo** (filas de datos del CSV, no cantidad de archivos). Con **500** divides ese peor caso en **dos bloques** (500 + 500): trabajas la carga en dos pasadas en lugar de enviar todo junto. Sigue cumpliendo el mínimo permitido (500) sin ir directo al máximo (1000).
+
+Si configuras **1000**, en el peor caso tienes **un solo bloque** (todo el archivo en una pasada). También es válido; el número definitivo se puede afinar con métricas o pruebas cuando el import esté terminado.
+
+Cada bloque más pequeño suele implicar menos filas por ronda de validación, por operaciones JDBC en batch y por transacción, lo que en general reduce el pico de memoria y el tiempo que la transacción permanece abierta, comparado con procesar 1000 filas de una sola vez.
+
+Para sobrescribir sin tocar el YAML: variable de entorno `DINET_PEDIDOS_CARGA_BATCH_SIZE` (relaxed binding de Spring).
+
+**Nota:** por ahora solo se valida al arranque; el flujo CSV/repositorios todavía no lee esta propiedad.
 
 ## Límites
 
-H2 ≠ Postgres en los tests, ya lo dije. El resto (cuántas filas aguanta bien, qué pasa si dos requests pegan con la misma idempotency key, etc.) lo anoto cuando lo haya probado de verdad.
+En tests, H2 no es Postgres; eso ya quedó indicado arriba. El resto (cuántas filas conviene cargar, qué pasa si dos peticiones comparten la misma idempotency key, etc.) lo anoto cuando lo haya probado en serio.
 
 ## Migraciones
 
 - **V1:** `clientes`, `zonas`, `pedidos`, `cargas_idempotencia`.
-- **V2:** datos demo para jugar en local.
+- **V2:** datos de ejemplo para desarrollo local.

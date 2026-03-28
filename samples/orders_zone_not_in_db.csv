@@ -1,0 +1,2 @@
+numeroPedido,clienteId,fechaEntrega,estado,zonaEntrega,requiereRefrigeracion
+ORD6002,CLI-123,2099-06-15,PENDIENTE,ZONA-INVENTADA,false

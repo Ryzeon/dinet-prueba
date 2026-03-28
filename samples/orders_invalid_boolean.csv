@@ -1,0 +1,2 @@
+numeroPedido,clienteId,fechaEntrega,estado,zonaEntrega,requiereRefrigeracion
+ORD3004,CLI-123,2099-06-15,PENDIENTE,ZONA1,si

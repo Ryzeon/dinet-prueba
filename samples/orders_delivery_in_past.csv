@@ -1,0 +1,2 @@
+numeroPedido,clienteId,fechaEntrega,estado,zonaEntrega,requiereRefrigeracion
+ORD3002,CLI-123,2020-01-01,PENDIENTE,ZONA1,false

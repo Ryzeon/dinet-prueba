@@ -1,0 +1,2 @@
+pedido,cliente,fecha,estado,zona,refri
+ORD1,CLI-123,2099-01-01,PENDIENTE,ZONA1,false

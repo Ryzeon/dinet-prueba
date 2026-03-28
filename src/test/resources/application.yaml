@@ -1,6 +1,6 @@
 dinet:
-  pedidos:
-    carga:
+  orders:
+    import:
       batch-size: 500
 
 spring:

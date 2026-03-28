@@ -8,14 +8,10 @@ import java.util.List;
  * <p>Date: 28/03/26 @ 01:28</p>
  */
 public record OrderLoadSummary(
-        long totalProcessed,
-        long saved,
-        long withErrors,
-        List<LineLoadError> lineErrors,
-        List<OrderLoadErrorGroup> errorsByType) {
+        long totalProcesados,
+        long guardados,
+        long conError,
 
-    public OrderLoadSummary {
-        lineErrors = List.copyOf(lineErrors);
-        errorsByType = List.copyOf(errorsByType);
-    }
-}
+        List<LineLoadError> erroresPorLinea,
+        List<OrderLoadErrorGroup> erroresPorTipo
+) {}

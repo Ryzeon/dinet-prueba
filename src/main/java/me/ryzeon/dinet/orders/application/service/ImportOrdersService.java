@@ -118,6 +118,7 @@ public class ImportOrdersService implements ImportOrdersUseCase {
         return buildSummary(totalProcessed, saved, withErrors, lineErrors);
     }
 
+    // Valida si el numero de pedido ya fue comprometido en la base de datos o si ya existe en el batch actual, para evitar procesar líneas con números de pedido repetidos
     private static boolean isDuplicateOrderNumber(Set<String> committed, List<QueuedRow> currentBatch, String orderNumber) {
         String cleanOrderNumber = orderNumber.trim();
         if (committed.contains(cleanOrderNumber)) {
@@ -162,7 +163,7 @@ public class ImportOrdersService implements ImportOrdersUseCase {
             // Se construye el contexto de catálogo para esta línea, con la información ya consultada en batch
             LineCatalogContext catalogContext = LineCatalogContext.of(customerOk, zoneOk, refrigerationSupported);
 
-            // Se colectan los errores de validación de esta línea, si los hubieraq
+            // Se colectan los errores de validación de esta línea, si los hubiera
             List<OrderLoadErrorCode> errorCodes = validator.validate(orderLine, catalogContext);
             if (!errorCodes.isEmpty()) {
                 for (OrderLoadErrorCode code : errorCodes) {

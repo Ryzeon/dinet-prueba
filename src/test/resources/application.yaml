@@ -11,6 +11,12 @@ spring:
   jpa:
     hibernate:
       ddl-auto: create-drop
+    open-in-view: false
+    properties:
+      hibernate:
+        jdbc:
+          batch_size: ${dinet.orders.import.batch-size}
+        order_inserts: true
   flyway:
     enabled: false
   batch:

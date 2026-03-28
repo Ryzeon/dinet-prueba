@@ -1,0 +1,22 @@
+Samples de carga CSV (ImportOrders).
+
+Seed esperado (Flyway):
+  zonas: ZONA1(sí), ZONA2(no), ZONA3(sí), ZONA5(no)
+  clientes: CLI-123, CLI-999 activos; CLI-666 inactivo; CLI-67 activo
+
+Cabecera valida: numeroPedido,clienteId,fechaEntrega,estado,zonaEntrega,requiereRefrigeracion
+
+--- Pocas lineas (casos puntuales) ---
+orders_ok_with_seed_data.csv          — 2 filas validas contra seed.
+orders_invalid_header.csv             — cabecera incorrecta.
+orders_wrong_column_count.csv         — columnas != 6.
+orders_duplicate_numero.csv           — numeroPedido duplicado en archivo.
+orders_cold_chain_not_supported.csv   — ZONA2/ZONA5 + requiereRefrigeracion true.
+
+--- Grandes (+5000 filas de datos) ---
+orders_bulk_5000_valid_seed.csv       — 5000 filas validas (prefijo OK5K). Clientes solo activos del seed.
+orders_bulk_6000_valid_seed.csv       — 6000 filas validas (prefijo OK6K). Otro lote para segunda importacion.
+orders_bulk_5200_invalid_mixed.csv    — 5200 filas; errores de negocio/catalogo rotados (ninguna deberia persistir).
+orders_bulk_5400_invalid_parser.csv   — 5400 filas; columnas, fecha, boolean, filas vacias.
+
+Nota: Reimportar el mismo archivo valido falla por UK numero_pedido. Usa otro prefijo (OK5K vs OK6K) o trunca pedidos.

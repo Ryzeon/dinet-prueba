@@ -1,2 +1,0 @@
-numeroPedido,clienteId,fechaEntrega,estado,zonaEntrega,requiereRefrigeracion
-ORD6001,CLI-NOEXISTE,2099-06-15,PENDIENTE,ZONA1,false

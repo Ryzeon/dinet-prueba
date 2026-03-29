@@ -140,6 +140,59 @@ class OrderLineValidatorTest {
         assertThat(validator.isDuplicateInFile(seen, "P002")).isFalse();
     }
 
+    @Test
+    void duplicateInFile_nullOrBlank_notDuplicate() {
+        Set<String> seen = new HashSet<>(Set.of("P001"));
+        assertThat(validator.isDuplicateInFile(seen, null)).isFalse();
+        assertThat(validator.isDuplicateInFile(seen, "   ")).isFalse();
+    }
+
+    @Test
+    void blankCustomerIdOnLine_fails() {
+        OrderLine line = new OrderLine(
+                "P001",
+                "  ",
+                LocalDate.of(2026, 6, 20),
+                OrderStatus.PENDIENTE,
+                "ZONA1",
+                false);
+        assertThat(validator.validate(line, LineCatalogContext.of(true, true, true)))
+                .contains(OrderLoadErrorCode.CUSTOMER_NOT_FOUND);
+    }
+
+    @Test
+    void blankZoneIdOnLine_fails() {
+        OrderLine line = new OrderLine(
+                "P001",
+                "CLI-123",
+                LocalDate.of(2026, 6, 20),
+                OrderStatus.PENDIENTE,
+                "",
+                false);
+        assertThat(validator.validate(line, LineCatalogContext.of(true, true, true)))
+                .contains(OrderLoadErrorCode.INVALID_ZONE);
+    }
+
+    @Test
+    void nullDeliveryDate_fails() {
+        OrderLine line = new OrderLine("P001", "CLI-123", null, OrderStatus.PENDIENTE, "ZONA1", false);
+        assertThat(validator.validate(line, LineCatalogContext.of(true, true, true)))
+                .containsExactly(OrderLoadErrorCode.INVALID_DELIVERY_DATE);
+    }
+
+    @Test
+    void blankOrderNumber_fails() {
+        OrderLine line = new OrderLine(
+                "  ",
+                "CLI-123",
+                LocalDate.of(2026, 6, 20),
+                OrderStatus.PENDIENTE,
+                "ZONA1",
+                false);
+        assertThat(validator.validate(line, LineCatalogContext.of(true, true, true)))
+                .contains(OrderLoadErrorCode.INVALID_ORDER_NUMBER);
+    }
+
     private static OrderLine baseline() {
         return new OrderLine(
                 "P001",

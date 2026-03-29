@@ -15,6 +15,7 @@ class OrderStatusTest {
     void fromText_isCaseInsensitive() {
         assertThat(OrderStatus.fromText("pendiente")).contains(OrderStatus.PENDIENTE);
         assertThat(OrderStatus.fromText("CONFIRMADO")).contains(OrderStatus.CONFIRMADO);
+        assertThat(OrderStatus.fromText("Entregado")).contains(OrderStatus.ENTREGADO);
     }
 
     @Test

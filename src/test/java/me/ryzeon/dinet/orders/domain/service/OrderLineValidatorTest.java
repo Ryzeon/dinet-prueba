@@ -35,102 +35,102 @@ class OrderLineValidatorTest {
 
     @Test
     void validLine_noErrors() {
-        var line = new OrderLine(
+        OrderLine line = new OrderLine(
                 "P001",
                 "CLI-123",
                 LocalDate.of(2026, 6, 20),
                 OrderStatus.PENDIENTE,
                 "ZONA1",
                 false);
-        var ctx = LineCatalogContext.of(true, true, true);
+        LineCatalogContext lineCatalogContext = LineCatalogContext.of(true, true, true);
 
-        assertThat(validator.validate(line, ctx)).isEmpty();
+        assertThat(validator.validate(line, lineCatalogContext)).isEmpty();
     }
 
     @Test
     void pastDeliveryDate_inLima_fails() {
-        var line = new OrderLine(
+        OrderLine line = new OrderLine(
                 "P001",
                 "CLI-123",
                 LocalDate.of(2026, 6, 14),
                 OrderStatus.PENDIENTE,
                 "ZONA1",
                 false);
-        var ctx = LineCatalogContext.of(true, true, true);
+        LineCatalogContext lineCatalogContext = LineCatalogContext.of(true, true, true);
 
-        assertThat(validator.validate(line, ctx)).containsExactly(OrderLoadErrorCode.INVALID_DELIVERY_DATE);
+        assertThat(validator.validate(line, lineCatalogContext)).containsExactly(OrderLoadErrorCode.INVALID_DELIVERY_DATE);
     }
 
     @Test
     void deliveryDateToday_allowed() {
-        var line = new OrderLine(
+        OrderLine line = new OrderLine(
                 "P001",
                 "CLI-123",
                 LocalDate.of(2026, 6, 15),
                 OrderStatus.PENDIENTE,
                 "ZONA1",
                 false);
-        var ctx = LineCatalogContext.of(true, true, true);
+        LineCatalogContext catalogContext = LineCatalogContext.of(true, true, true);
 
-        assertThat(validator.validate(line, ctx)).isEmpty();
+        assertThat(validator.validate(line, catalogContext)).isEmpty();
     }
 
     @Test
     void customerMissing() {
-        var line = baseline();
-        var ctx = LineCatalogContext.of(false, true, true);
+        OrderLine line = baseline();
+        LineCatalogContext lineCatalogContext = LineCatalogContext.of(false, true, true);
 
-        assertThat(validator.validate(line, ctx)).contains(OrderLoadErrorCode.CUSTOMER_NOT_FOUND);
+        assertThat(validator.validate(line, lineCatalogContext)).contains(OrderLoadErrorCode.CUSTOMER_NOT_FOUND);
     }
 
     @Test
     void zoneMissing() {
-        var line = baseline();
-        var ctx = LineCatalogContext.withoutZone(true);
+        OrderLine line = baseline();
+        LineCatalogContext lineCatalogContext = LineCatalogContext.withoutZone(true);
 
-        assertThat(validator.validate(line, ctx)).contains(OrderLoadErrorCode.INVALID_ZONE);
+        assertThat(validator.validate(line, lineCatalogContext)).contains(OrderLoadErrorCode.INVALID_ZONE);
     }
 
     @Test
     void refrigerationNotSupportedByZone() {
-        var line = new OrderLine(
+        OrderLine line = new OrderLine(
                 "P001",
                 "CLI-123",
                 LocalDate.of(2026, 6, 20),
                 OrderStatus.PENDIENTE,
                 "ZONA2",
                 true);
-        var ctx = LineCatalogContext.of(true, true, false);
+        LineCatalogContext lineCatalogContext = LineCatalogContext.of(true, true, false);
 
-        assertThat(validator.validate(line, ctx)).contains(OrderLoadErrorCode.COLD_CHAIN_NOT_SUPPORTED);
+        assertThat(validator.validate(line, lineCatalogContext)).contains(OrderLoadErrorCode.COLD_CHAIN_NOT_SUPPORTED);
     }
 
     @Test
     void orderNumberWithHyphen_invalid() {
-        var line = new OrderLine(
+        OrderLine line = new OrderLine(
                 "P-001",
                 "CLI-123",
                 LocalDate.of(2026, 6, 20),
                 OrderStatus.PENDIENTE,
                 "ZONA1",
                 false);
-        var ctx = LineCatalogContext.of(true, true, true);
+        LineCatalogContext lineCatalogContext = LineCatalogContext.of(true, true, true);
 
-        assertThat(validator.validate(line, ctx)).contains(OrderLoadErrorCode.INVALID_ORDER_NUMBER);
+        assertThat(validator.validate(line, lineCatalogContext)).contains(OrderLoadErrorCode.INVALID_ORDER_NUMBER);
     }
 
     @Test
     void nullStatus_invalid() {
-        var line = new OrderLine(
+        OrderLine line = new OrderLine(
                 "P001",
                 "CLI-123",
                 LocalDate.of(2026, 6, 20),
                 null,
                 "ZONA1",
                 false);
-        var ctx = LineCatalogContext.of(true, true, true);
+        LineCatalogContext lineCatalogContext = LineCatalogContext.of(true, true, true);
 
-        assertThat(validator.validate(line, ctx)).contains(OrderLoadErrorCode.INVALID_STATUS);
+        assertThat(validator.validate(line, lineCatalogContext)).contains(OrderLoadErrorCode.INVALID_STATUS);
     }
 
     @Test

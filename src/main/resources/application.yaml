@@ -2,6 +2,10 @@ dinet:
   orders:
     import:
       batch-size: 500
+  security:
+    jwt:
+      # Generate in https://jwtsecrets.com/#generator
+      secret: ${DINET_SECURITY_JWT_SECRET:82f021ce15e0faabf5fe5274e1d2c393}
 
 spring:
   application:

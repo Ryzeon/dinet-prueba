@@ -2,6 +2,9 @@ dinet:
   orders:
     import:
       batch-size: 500
+  security:
+    jwt:
+      secret: e8bea9d9e2ed68c9ba71b70357fcc29c
 
 spring:
   datasource:

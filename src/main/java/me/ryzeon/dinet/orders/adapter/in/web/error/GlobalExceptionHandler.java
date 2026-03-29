@@ -5,6 +5,8 @@ import jakarta.validation.ConstraintViolationException;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import me.ryzeon.dinet.api.error.ApiErrorDetail;
+import me.ryzeon.dinet.api.error.ApiErrorResponse;
 import me.ryzeon.dinet.orders.adapter.in.web.pipeline.CorrelationIdFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +25,7 @@ import org.springframework.web.servlet.resource.NoResourceFoundException;
 /**
  * <p>Created by Alex Avila Asto - A.K.A (Ryzeon)</p>
  * <p>Project: dinet-prueba</p>
- * <p>Date: 28/03/26 @ 15:10</p>
+ * <p>Date: 28/03/26 @ 13:29</p>
  */
 @RestControllerAdvice
 public class GlobalExceptionHandler {

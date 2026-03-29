@@ -1,4 +1,4 @@
-package me.ryzeon.dinet.orders.adapter.in.web.error;
+package me.ryzeon.dinet.api.error;
 
 import java.util.List;
 
@@ -10,7 +10,6 @@ import java.util.List;
 public record ApiErrorResponse(String code, String message, List<ApiErrorDetail> details, String correlationId) {
 
     public ApiErrorResponse {
-        // null safety
         code = code == null ? "" : code;
         message = message == null ? "" : message;
         details = details == null ? List.of() : List.copyOf(details);

@@ -147,7 +147,7 @@ public class ImportOrdersService implements ImportOrdersUseCase {
             zoneIds.add(q.line().deliveryZoneId());
         }
 
-        // Se consultan los catálogos en batch para validar existencia de clientes y soporte de refrigeración por zonaq
+        // catálogos en batch: clientes que existen y si la zona soporta frio
         Set<String> existingCustomers = customers.existingIdsAmong(customerIds);
         Map<String, Boolean> zoneRefrigeration = zones.refrigerationSupportFor(zoneIds);
 

@@ -33,7 +33,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MissingRequestHeaderException.class)
     public ResponseEntity<ApiErrorResponse> missingHeader(
             MissingRequestHeaderException ex, HttpServletRequest request) {
-        String msg = "Missing required header: " + ex.getHeaderName();
+        String msg = "Falta la cabecera: " + ex.getHeaderName();
         return build(
                 HttpStatus.BAD_REQUEST,
                 "MISSING_HEADER",
@@ -50,7 +50,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MissingServletRequestParameterException.class)
     public ResponseEntity<ApiErrorResponse> missingParam(
             MissingServletRequestParameterException ex, HttpServletRequest request) {
-        String msg = "Missing required parameter: " + ex.getParameterName();
+        String msg = "Falta el parametro: " + ex.getParameterName();
         return build(
                 HttpStatus.BAD_REQUEST,
                 "MISSING_PARAMETER",
@@ -62,7 +62,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MissingServletRequestPartException.class)
     public ResponseEntity<ApiErrorResponse> missingPart(
             MissingServletRequestPartException ex, HttpServletRequest request) {
-        String msg = "Missing required part: " + ex.getRequestPartName();
+        String msg = "Falta la parte multipart: " + ex.getRequestPartName();
         return build(
                 HttpStatus.BAD_REQUEST,
                 "MISSING_PART",
@@ -80,7 +80,7 @@ public class GlobalExceptionHandler {
         return build(
                 HttpStatus.BAD_REQUEST,
                 "VALIDATION_ERROR",
-                "Request validation failed",
+                "Error de validacion",
                 details,
                 request);
     }
@@ -94,7 +94,7 @@ public class GlobalExceptionHandler {
         return build(
                 HttpStatus.BAD_REQUEST,
                 "VALIDATION_ERROR",
-                "Constraint validation failed",
+                "Violacion de restricciones",
                 details,
                 request);
     }
@@ -105,7 +105,7 @@ public class GlobalExceptionHandler {
         return build(
                 HttpStatus.BAD_REQUEST,
                 "MALFORMED_REQUEST",
-                "Request body could not be read",
+                "No se pudo leer el body",
                 List.of(),
                 request);
     }
@@ -116,14 +116,14 @@ public class GlobalExceptionHandler {
         return build(
                 HttpStatus.PAYLOAD_TOO_LARGE,
                 "FILE_TOO_LARGE",
-                "Uploaded file exceeds configured maximum size",
+                "El archivo pesa mas de lo permitido",
                 List.of(),
                 request);
     }
 
     @ExceptionHandler(NoResourceFoundException.class)
     public ResponseEntity<ApiErrorResponse> notFound(NoResourceFoundException ex, HttpServletRequest request) {
-        return build(HttpStatus.NOT_FOUND, "NOT_FOUND", "Resource not found", List.of(), request);
+        return build(HttpStatus.NOT_FOUND, "NOT_FOUND", "No existe esa ruta", List.of(), request);
     }
 
     @ExceptionHandler(Exception.class)
@@ -132,7 +132,7 @@ public class GlobalExceptionHandler {
         return build(
                 HttpStatus.INTERNAL_SERVER_ERROR,
                 "INTERNAL_ERROR",
-                "An unexpected error occurred",
+                "Error interno (ver logs)",
                 List.of(),
                 request);
     }

@@ -1,4 +1,4 @@
-package me.ryzeon.dinet.orders.adapter.in.web;
+package me.ryzeon.dinet.orders.adapter.in.web.pipeline;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

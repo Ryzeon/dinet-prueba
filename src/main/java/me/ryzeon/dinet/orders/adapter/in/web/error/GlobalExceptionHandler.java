@@ -5,7 +5,7 @@ import jakarta.validation.ConstraintViolationException;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import me.ryzeon.dinet.orders.adapter.in.web.CorrelationIdFilter;
+import me.ryzeon.dinet.orders.adapter.in.web.pipeline.CorrelationIdFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;

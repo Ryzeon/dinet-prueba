@@ -1,4 +1,6 @@
-Samples de carga CSV (ImportOrders).
+Samples de carga CSV
+
+-- Generador con claude.
 
 Seed esperado (Flyway):
   zonas: ZONA1(sí), ZONA2(no), ZONA3(sí), ZONA5(no)
@@ -18,5 +20,3 @@ orders_bulk_5000_valid_seed.csv       — 5000 filas validas (prefijo OK5K). Cli
 orders_bulk_6000_valid_seed.csv       — 6000 filas validas (prefijo OK6K). Otro lote para segunda importacion.
 orders_bulk_5200_invalid_mixed.csv    — 5200 filas; errores de negocio/catalogo rotados (ninguna deberia persistir).
 orders_bulk_5400_invalid_parser.csv   — 5400 filas; columnas, fecha, boolean, filas vacias.
-
-Nota: Reimportar el mismo archivo valido falla por UK numero_pedido. Usa otro prefijo (OK5K vs OK6K) o trunca pedidos.

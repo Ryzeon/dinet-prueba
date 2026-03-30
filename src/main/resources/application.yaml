@@ -8,6 +8,8 @@ dinet:
       secret: ${DINET_SECURITY_JWT_SECRET:82f021ce15e0faabf5fe5274e1d2c393}
 
 spring:
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
   application:
     name: dinet-prueba
   servlet:
@@ -31,6 +33,3 @@ spring:
   flyway:
     enabled: true
     locations: classpath:db/migration
-  batch:
-    jdbc:
-      initialize-schema: always

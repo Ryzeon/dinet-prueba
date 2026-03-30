@@ -24,6 +24,3 @@ spring:
         order_inserts: true
   flyway:
     enabled: false
-  batch:
-    jdbc:
-      initialize-schema: always

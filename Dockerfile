@@ -17,7 +17,7 @@ FROM eclipse-temurin:17-jre-jammy
 
 WORKDIR /app
 
-COPY --from=builder /app/target/despertares-backend-*.jar app.jar
+COPY --from=builder /app/target/dinet-prueba-*.jar app.jar
 
 RUN useradd -m -u 1000 appuser || true
 

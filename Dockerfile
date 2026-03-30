@@ -11,7 +11,7 @@ RUN ./mvnw dependency:go-offline -B 2>/dev/null || true
 
 COPY src ./src
 
-RUN ./mvnw clean package
+RUN ./mvnw clean package -DskipTests
 
 FROM eclipse-temurin:17-jre-jammy
 

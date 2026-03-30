@@ -40,7 +40,7 @@ Tests:
 
 En tests uso H2 en memoria y no corro las migraciones de Flyway (el SQL está pensado para Postgres). Si rompes una migración SQL, los tests pueden seguir en verde: conviene probar también contra Docker.
 
-Documentación interactiva: abre `http://localhost:8080/swagger-ui` (redirige a la UI). La spec JSON está en `/v3/api-docs`. Esas rutas van sin JWT; el endpoint de carga y el resto sí necesitan Bearer. El único otro público relevante es `/error` (Spring).
+Documentación interactiva: abre `http://localhost:8080/swagger-ui` (redirige a la UI). La spec JSON está en `/v3/api-docs`. Esas rutas van sin JWT; el endpoint de carga y el resto sí necesitan Bearer. El único otro público relevante es `/error`.
 
 ---
 
@@ -139,8 +139,6 @@ En logs INFO verás por cada bloque algo como inicio/fin de import batch con `du
 
 - Colección Postman (importar en Postman y ajustar variables `baseUrl`, `token`, `idempotencyKey`): [postman/dinet-prueba.postman_collection.json](postman/dinet-prueba.postman_collection.json).
 - CSV de ejemplo: carpeta [samples/](samples/) e índice en [samples/INDEX.txt](samples/INDEX.txt).
-- Enunciado / alcance del proyecto: [STATEMENT.MD](STATEMENT.MD).
-
 ---
 
 ## Migraciones

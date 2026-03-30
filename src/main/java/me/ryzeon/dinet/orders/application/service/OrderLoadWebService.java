@@ -1,7 +1,7 @@
 package me.ryzeon.dinet.orders.application.service;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.time.Clock;
 import java.util.List;
 import me.ryzeon.dinet.orders.application.dto.OrderLoadSummary;
@@ -40,14 +40,17 @@ public class OrderLoadWebService {
             throw new IllegalArgumentException("Header Idempotency-Key must not be blank");
         }
 
-        byte[] content = file.getBytes();
-        String hash = Sha256Hasher.hexDigest(content);
+        // Hacemos el hash del contenido para detectar repetido incluso si no se envía el mismo Idempotency-Key
+        String hash;
+        try (InputStream hashPass = file.getInputStream()) {
+            hash = Sha256Hasher.hexDigest(hashPass);
+        }
 
         if (idempotency.wasAlreadyProcessed(key, hash)) {
             return new OrderLoadWebResult(idempotentPlaceholderSummary(), true);
         }
 
-        try (var in = new ByteArrayInputStream(content)) {
+        try (InputStream in = file.getInputStream()) {
             OrderLoadSummary summary = importOrders.loadFromCsv(in, clock);
             idempotency.markProcessed(key, hash);
             return new OrderLoadWebResult(summary, false);

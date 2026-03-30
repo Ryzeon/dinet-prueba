@@ -144,6 +144,7 @@
                             <goal>check</goal>
                         </goals>
                         <configuration>
+<!--                            CHECK PARA CUBRIR TEST DE DOMINIO COMO MÍNIMO 80 PORCIENTO-->
                             <includes>
                                 <include>me/ryzeon/dinet/orders/domain/**</include>
                             </includes>

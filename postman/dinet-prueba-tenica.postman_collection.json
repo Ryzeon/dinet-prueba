@@ -1,0 +1,457 @@
+{
+  "info": {
+    "_postman_id": "42080d36-f3e8-4e4c-b2c2-b4b10f9a7b5e",
+    "name": "dinet-prueba-tenica",
+    "description": "Para generar el jwt use [https://www.jwt.io/](https://www.jwt.io/)\n\nPaso 1: JWT Encoder  \nPaso 2: Payload  \n{  \n\"sub\": \"local-dev\",  \n\"exp\": 2524608000  \n}  \nPaso 3: Sign JWT -> Poner el secrets en tu application.yaml",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "46913376",
+    "_collection_link": "https://go.postman.co/collection/46913376-42080d36-f3e8-4e4c-b2c2-b4b10f9a7b5e?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "pedidos",
+      "item": [
+        {
+          "name": "cargar",
+          "item": [
+            {
+              "name": "Cargar pedidos desde CSV (multipart, campo file)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Idempotency-Key",
+                    "value": "string"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "multipart/form-data"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "*/*"
+                  }
+                ],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "key": "file",
+                      "type": "file",
+                      "src": "/Users/ryzeon/Development/@Sources/dinet-prueba/samples/orders_duplicate_numero.csv"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/pedidos/cargar",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "pedidos",
+                    "cargar"
+                  ]
+                }
+              },
+              "response": [
+                {
+                  "name": "OK",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Idempotency-Key",
+                        "value": "string"
+                      },
+                      {
+                        "key": "Content-Type",
+                        "value": "multipart/form-data"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "*/*"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: bearer",
+                        "key": "Authorization",
+                        "value": "Bearer <token>"
+                      }
+                    ],
+                    "body": {
+                      "mode": "formdata",
+                      "formdata": [
+                        {
+                          "key": "file",
+                          "type": "file",
+                          "src": []
+                        }
+                      ]
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/pedidos/cargar",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "pedidos",
+                        "cargar"
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "text",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "*/*"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n  \"totalProcesados\": 5122,\n  \"guardados\": 3704,\n  \"conError\": 514,\n  \"erroresPorLinea\": [\n    {\n      \"lineNumber\": 5678,\n      \"code\": \"CLIENTE_NO_ENCONTRADO\",\n      \"detail\": \"string\"\n    },\n    {\n      \"lineNumber\": 7055,\n      \"code\": \"ZONA_INVALIDA\",\n      \"detail\": \"string\"\n    }\n  ],\n  \"erroresPorTipo\": [\n    {\n      \"contractCode\": \"string\",\n      \"count\": 6431\n    },\n    {\n      \"contractCode\": \"string\",\n      \"count\": 1863\n    }\n  ]\n}"
+                },
+                {
+                  "name": "Numero de pedido duplicado",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Idempotency-Key",
+                        "value": "string"
+                      },
+                      {
+                        "key": "Content-Type",
+                        "value": "multipart/form-data"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "*/*"
+                      }
+                    ],
+                    "body": {
+                      "mode": "formdata",
+                      "formdata": [
+                        {
+                          "key": "file",
+                          "type": "file",
+                          "src": "/Users/ryzeon/Development/@Sources/dinet-prueba/samples/orders_duplicate_numero.csv"
+                        }
+                      ]
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/pedidos/cargar",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "pedidos",
+                        "cargar"
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": null,
+                  "header": [
+                    {
+                      "key": "X-Correlation-Id",
+                      "value": "121dd4a3-8f2d-4ab6-b843-72dca7940b9a"
+                    },
+                    {
+                      "key": "X-Correlation-Id",
+                      "value": "121dd4a3-8f2d-4ab6-b843-72dca7940b9a"
+                    },
+                    {
+                      "key": "X-Content-Type-Options",
+                      "value": "nosniff"
+                    },
+                    {
+                      "key": "X-XSS-Protection",
+                      "value": "0"
+                    },
+                    {
+                      "key": "Cache-Control",
+                      "value": "no-cache, no-store, max-age=0, must-revalidate"
+                    },
+                    {
+                      "key": "Pragma",
+                      "value": "no-cache"
+                    },
+                    {
+                      "key": "Expires",
+                      "value": "0"
+                    },
+                    {
+                      "key": "X-Frame-Options",
+                      "value": "DENY"
+                    },
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    },
+                    {
+                      "key": "Transfer-Encoding",
+                      "value": "chunked"
+                    },
+                    {
+                      "key": "Date",
+                      "value": "Mon, 30 Mar 2026 04:33:33 GMT"
+                    },
+                    {
+                      "key": "Keep-Alive",
+                      "value": "timeout=60"
+                    },
+                    {
+                      "key": "Connection",
+                      "value": "keep-alive"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n    \"totalProcesados\": 2,\n    \"guardados\": 1,\n    \"conError\": 1,\n    \"erroresPorLinea\": [\n        {\n            \"numeroLinea\": 3,\n            \"codigo\": \"DUPLICADO\",\n            \"detalle\": \"Número de pedido duplicado en el archivo\"\n        }\n    ],\n    \"erroresPorTipo\": [\n        {\n            \"codigo\": \"DUPLICADO\",\n            \"cantidad\": 1\n        }\n    ]\n}"
+                },
+                {
+                  "name": "Header no valido",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Idempotency-Key",
+                        "value": "string"
+                      },
+                      {
+                        "key": "Content-Type",
+                        "value": "multipart/form-data"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "*/*"
+                      }
+                    ],
+                    "body": {
+                      "mode": "formdata",
+                      "formdata": [
+                        {
+                          "key": "file",
+                          "type": "file",
+                          "src": "/Users/ryzeon/Development/@Sources/dinet-prueba/samples/orders_invalid_header.csv"
+                        }
+                      ]
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/pedidos/cargar",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "pedidos",
+                        "cargar"
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": null,
+                  "header": [
+                    {
+                      "key": "X-Correlation-Id",
+                      "value": "41284991-0918-46c5-adb5-9fef5ee459b0"
+                    },
+                    {
+                      "key": "X-Correlation-Id",
+                      "value": "41284991-0918-46c5-adb5-9fef5ee459b0"
+                    },
+                    {
+                      "key": "X-Content-Type-Options",
+                      "value": "nosniff"
+                    },
+                    {
+                      "key": "X-XSS-Protection",
+                      "value": "0"
+                    },
+                    {
+                      "key": "Cache-Control",
+                      "value": "no-cache, no-store, max-age=0, must-revalidate"
+                    },
+                    {
+                      "key": "Pragma",
+                      "value": "no-cache"
+                    },
+                    {
+                      "key": "Expires",
+                      "value": "0"
+                    },
+                    {
+                      "key": "X-Frame-Options",
+                      "value": "DENY"
+                    },
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    },
+                    {
+                      "key": "Transfer-Encoding",
+                      "value": "chunked"
+                    },
+                    {
+                      "key": "Date",
+                      "value": "Mon, 30 Mar 2026 04:34:05 GMT"
+                    },
+                    {
+                      "key": "Keep-Alive",
+                      "value": "timeout=60"
+                    },
+                    {
+                      "key": "Connection",
+                      "value": "keep-alive"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n    \"totalProcesados\": 0,\n    \"guardados\": 0,\n    \"conError\": 1,\n    \"erroresPorLinea\": [\n        {\n            \"numeroLinea\": 1,\n            \"codigo\": \"NUMERO_PEDIDO_INVALIDO\",\n            \"detalle\": \"Cabecera CSV no es válida\"\n        }\n    ],\n    \"erroresPorTipo\": [\n        {\n            \"codigo\": \"NUMERO_PEDIDO_INVALIDO\",\n            \"cantidad\": 1\n        }\n    ]\n}"
+                },
+                {
+                  "name": "Carga exitosa 5000 bulk",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Idempotency-Key",
+                        "value": "string"
+                      },
+                      {
+                        "key": "Content-Type",
+                        "value": "multipart/form-data"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "*/*"
+                      }
+                    ],
+                    "body": {
+                      "mode": "formdata",
+                      "formdata": [
+                        {
+                          "key": "file",
+                          "type": "file",
+                          "src": "/Users/ryzeon/Development/@Sources/dinet-prueba/samples/orders_bulk_5000_valid_seed.csv"
+                        }
+                      ]
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/pedidos/cargar",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "pedidos",
+                        "cargar"
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": null,
+                  "header": [
+                    {
+                      "key": "X-Correlation-Id",
+                      "value": "0482d231-787a-4d13-ab86-4849da04cf80"
+                    },
+                    {
+                      "key": "X-Correlation-Id",
+                      "value": "0482d231-787a-4d13-ab86-4849da04cf80"
+                    },
+                    {
+                      "key": "X-Content-Type-Options",
+                      "value": "nosniff"
+                    },
+                    {
+                      "key": "X-XSS-Protection",
+                      "value": "0"
+                    },
+                    {
+                      "key": "Cache-Control",
+                      "value": "no-cache, no-store, max-age=0, must-revalidate"
+                    },
+                    {
+                      "key": "Pragma",
+                      "value": "no-cache"
+                    },
+                    {
+                      "key": "Expires",
+                      "value": "0"
+                    },
+                    {
+                      "key": "X-Frame-Options",
+                      "value": "DENY"
+                    },
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    },
+                    {
+                      "key": "Transfer-Encoding",
+                      "value": "chunked"
+                    },
+                    {
+                      "key": "Date",
+                      "value": "Mon, 30 Mar 2026 04:35:02 GMT"
+                    },
+                    {
+                      "key": "Keep-Alive",
+                      "value": "timeout=60"
+                    },
+                    {
+                      "key": "Connection",
+                      "value": "keep-alive"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n    \"totalProcesados\": 5000,\n    \"guardados\": 5000,\n    \"conError\": 0,\n    \"erroresPorLinea\": [],\n    \"erroresPorTipo\": []\n}"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJsb2NhbC1kZXYiLCJleHAiOjI1MjQ2MDgwMDB9.EUijS_HCCt7TyImXA_Tr9T9HqFYb_5MObR-Jf9f05fQ",
+        "type": "string"
+      }
+    ]
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    }
+  ]
+}

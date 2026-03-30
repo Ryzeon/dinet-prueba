@@ -20,6 +20,8 @@ import me.ryzeon.dinet.orders.port.in.ImportOrdersUseCase;
 import me.ryzeon.dinet.orders.port.out.CustomerCatalogPort;
 import me.ryzeon.dinet.orders.port.out.OrderPersistencePort;
 import me.ryzeon.dinet.orders.port.out.ZoneCatalogPort;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 /**
@@ -29,6 +31,10 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class ImportOrdersService implements ImportOrdersUseCase {
+
+    private static final Logger log = LoggerFactory.getLogger(ImportOrdersService.class);
+
+    private static final int READER_BUFFER_CHARS = 16384;
 
     private static final String EXPECTED_HEADER =
             "numeropedido,clienteid,fechaentrega,estado,zonaentrega,requiererefrigeracion";
@@ -59,7 +65,8 @@ public class ImportOrdersService implements ImportOrdersUseCase {
         OrderLineValidator validator = new OrderLineValidator(clock);
         int batchSize = importProperties.batchSize();
 
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(csvContent, StandardCharsets.UTF_8))) {
+        try (BufferedReader reader = new BufferedReader(
+                new InputStreamReader(csvContent, StandardCharsets.UTF_8), READER_BUFFER_CHARS)) {
             String headerLine = reader.readLine();
             if (headerLine == null) {
                 return buildSummary(0, 0, 0, lineErrors);
@@ -68,11 +75,13 @@ public class ImportOrdersService implements ImportOrdersUseCase {
                 lineErrors.add(new LineLoadError(
                         1,
                         OrderLoadErrorCode.INVALID_ORDER_NUMBER,
-                        "Cabecera CSV no es valida"));
+                        "Cabecera CSV no es válida"));
                 return buildSummary(0, 0, 1, lineErrors);
             }
 
-            List<QueuedRow> batch = new ArrayList<>();
+            List<QueuedRow> batch = new ArrayList<>(batchSize);
+            HashSet<String> pendingOrderNumbersInBatch = new HashSet<>();
+            int batchIndex = 0;
             String line;
             int lineNumber = 1;
 
@@ -89,54 +98,63 @@ public class ImportOrdersService implements ImportOrdersUseCase {
                 }
 
                 OrderLine orderLine = parsed.orderLine().orElseThrow();
-                if (isDuplicateOrderNumber(committedOrderNumbers, batch, orderLine.orderNumber())) {
+                String orderKey = orderLine.orderNumber().trim();
+                if (committedOrderNumbers.contains(orderKey) || pendingOrderNumbersInBatch.contains(orderKey)) {
                     lineErrors.add(new LineLoadError(
-                            lineNumber, OrderLoadErrorCode.DUPLICATE, "numeroPedido repetido en el archivo"));
+                            lineNumber,
+                            OrderLoadErrorCode.DUPLICATE,
+                            "Número de pedido duplicado en el archivo"));
                     continue;
                 }
 
                 batch.add(new QueuedRow(lineNumber, orderLine));
+                pendingOrderNumbersInBatch.add(orderKey);
 
                 if (batch.size() >= batchSize) {
-                    saved += processBatch(batch, committedOrderNumbers, validator, lineErrors);
+                    batchIndex++;
+                    saved += processBatch(batchIndex, batch, committedOrderNumbers, validator, lineErrors);
                     batch.clear();
+                    pendingOrderNumbersInBatch.clear();
                 }
             }
 
             if (!batch.isEmpty()) {
-                saved += processBatch(batch, committedOrderNumbers, validator, lineErrors);
+                batchIndex++;
+                saved += processBatch(batchIndex, batch, committedOrderNumbers, validator, lineErrors);
             }
         } catch (Exception e) {
             lineErrors.add(new LineLoadError(
                     0,
                     OrderLoadErrorCode.INVALID_ORDER_NUMBER,
-                    "Error leyendo CSV: " + e.getMessage()));
+                    "Error al leer el CSV: " + e.getMessage()));
         }
 
-        long withErrors =
-                lineErrors.stream().mapToLong(LineLoadError::lineNumber).distinct().count();
+        long withErrors = countDistinctErrorLines(lineErrors);
         return buildSummary(totalProcessed, saved, withErrors, lineErrors);
     }
 
-    // Valida si el numero de pedido ya fue comprometido en la base de datos o si ya existe en el batch actual, para evitar procesar líneas con números de pedido repetidos
-    private static boolean isDuplicateOrderNumber(Set<String> committed, List<QueuedRow> currentBatch, String orderNumber) {
-        String cleanOrderNumber = orderNumber.trim();
-        if (committed.contains(cleanOrderNumber)) {
-            return true;
+    private static long countDistinctErrorLines(List<LineLoadError> lineErrors) {
+        HashSet<Integer> lines = new HashSet<>();
+        for (LineLoadError e : lineErrors) {
+            lines.add(e.lineNumber());
         }
-        for (QueuedRow q : currentBatch) {
-            if (q.line().orderNumber().trim().equals(cleanOrderNumber)) {
-                return true;
-            }
-        }
-        return false;
+        return lines.size();
     }
 
     private long processBatch(
+            int batchIndex,
             List<QueuedRow> batch,
             Set<String> committedOrderNumbers,
             OrderLineValidator validator,
             List<LineLoadError> lineErrors) {
+
+        long startNanos = System.nanoTime();
+        int queuedRows = batch.size();
+        log.info(
+                "import batch starting: batchIndex={}, queuedRows={}, configuredBatchSize={}",
+                batchIndex,
+                queuedRows,
+                importProperties.batchSize());
 
         HashSet<String> customerIds = new HashSet<>();
         HashSet<String> zoneIds = new HashSet<>();
@@ -179,7 +197,16 @@ public class ImportOrdersService implements ImportOrdersUseCase {
         if (!toSave.isEmpty()) {
             persistence.saveAllInBatch(toSave);
         }
-        return toSave.size();
+        long durationMs = (System.nanoTime() - startNanos) / 1_000_000L;
+        int persisted = toSave.size();
+        log.info(
+                "import batch finished: batchIndex={}, queuedRows={}, persistedRows={}, durationMs={}",
+                batchIndex,
+                queuedRows,
+                persisted,
+                durationMs);
+
+        return persisted;
     }
 
     private static boolean headerLooksValid(String headerLine) {
@@ -192,7 +219,9 @@ public class ImportOrdersService implements ImportOrdersUseCase {
 
     private static OrderLoadSummary buildSummary(
             long totalProcessed, long saved, long withErrors, List<LineLoadError> lineErrors) {
+
         EnumMap<OrderLoadErrorCode, Long> counts = new EnumMap<>(OrderLoadErrorCode.class);
+
         for (LineLoadError err : lineErrors) {
             counts.merge(err.code(), 1L, Long::sum);
         }
